@@ -27,17 +27,17 @@ db.run(`
 function generateApiKey() {
     return require('crypto').randomBytes(16).toString('hex');
 }
-function createImage(width, height, text,bg) {
+function createImage(width, height, text,bg,color) {
     // Create a canvas and get its context
     const canvas = createCanvas(width, height);
     const ctx = canvas.getContext('2d');
 
     // Fill the background with white
-    ctx.fillStyle = 'white';
+    ctx.fillStyle = "#"+bg || 'white';
     ctx.fillRect(0, 0, width, height);
 
     // Set text properties
-    ctx.fillStyle =  bg||'black';
+    ctx.fillStyle = "#"+color||'black';
     ctx.font = `${width / 10}px Arial`;
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
@@ -146,7 +146,8 @@ app.get('/check-key-expiry', (req, res) => {
 app.get('/genpic', validateApiKey, (req, res) => {
     const width = parseInt(req.query.w, 10) || 300;
     const height = parseInt(req.query.h, 10) || 500;
-    const bg = req.query.bg|| "#fff";
+    const bg = req.query.bg|| "fff";
+    const color = req.query.color|| "000";
     const text = req.query.t || `${width}x${height}`;
 
     if (isNaN(width) || isNaN(height)) {
@@ -154,7 +155,7 @@ app.get('/genpic', validateApiKey, (req, res) => {
     }
 
     try {
-        const imageBuffer = createImage(width, height, text, bg);
+        const imageBuffer = createImage(width, height, text, bg,color);
         res.set('Content-Type', 'image/png');
         res.send(imageBuffer);
     } catch (err) {
