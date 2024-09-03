@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>File Upload</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+</head>
+
+<body>
+    <div class="container">
+        <h1>Upload File</h1>
+        <form id="uploadForm">
+            <input type="file" id="fileInput" name="image" accept="image/*" />
+            <button type="submit">Upload</button>
+        </form>
+        <img id="imgUrl"/>
+        <a id="url" href="http://localhost:2000/images"></a>
+    </div>
+    <script>
+        document.getElementById('uploadForm').addEventListener('submit', function (event) {
+            event.preventDefault();
+            const formData = new FormData();
+            const fileInput = document.getElementById('fileInput');
+            formData.append('image', fileInput.files[0]);
+
+            axios.post('http://localhost:2000/upload', formData)
+                .then(response => {
+                    document.getElementById('imgUrl').src = response.data.url;
+                    document.getElementById('url').innerHTML = response.data.url;
+                    document.getElementById('url').href = response.data.url;
+
+                })
+                .catch(error => {
+                    document.getElementById('imgUrl').innerText = 'Error uploading file.';
+                    document.getElementById('url').style.color = '';
+                });
+        });
+    </script>
+</body>
+
+</html>
